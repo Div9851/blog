@@ -1,0 +1,71 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { SITE_TITLE } from "../../config";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("posts");
+
+  const tags = new Set<string>();
+  allPosts.forEach((post) => {
+    post.data.tags.forEach((tag) => tags.add(tag));
+  });
+
+  return Array.from(tags).map((tag) => {
+    const filteredPosts = allPosts.filter((post) =>
+      post.data.tags.includes(tag)
+    );
+    return {
+      params: { tag },
+      props: {
+        posts: filteredPosts.sort(
+          (a, b) => b.data.date.getTime() - a.data.date.getTime()
+        ),
+      },
+    };
+  });
+}
+
+interface Props {
+  posts: CollectionEntry<"posts">[];
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<Layout title={`Tag: ${tag} - ${SITE_TITLE}`}>
+  <h1>Tag: {tag}</h1>
+  <p style="color: var(--gray-text); margin-bottom: 2rem;">
+    {posts.length} post{posts.length !== 1 ? "s" : ""}
+  </p>
+  <ul class="post-list">
+    {
+      posts.map((post) => (
+        <li class="post-item">
+          <div class="post-meta">
+            {post.data.date.toLocaleDateString("ja-JP", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </div>
+          <h2 class="post-title">
+            <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+          </h2>
+          <div class="tags">
+            {post.data.tags.map((t) => (
+              <a href={`/tags/${t}`} class="tag">
+                {t}
+              </a>
+            ))}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+  <div style="margin-top: 2rem;">
+    <a href="/tags">← All Tags</a>
+  </div>
+</Layout>

@@ -1,0 +1,123 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<Layout title={post.data.title}>
+  <article>
+    <h1>{post.data.title}</h1>
+    <div class="post-meta">
+      {
+        post.data.date.toLocaleDateString("ja-JP", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      }
+    </div>
+    <div class="tags">
+      {
+        post.data.tags.map((tag) => (
+          <a href={`/tags/${tag}`} class="tag">
+            {tag}
+          </a>
+        ))
+      }
+    </div>
+    <div class="content">
+      <Content />
+    </div>
+  </article>
+  <div style="margin-top: 3rem;">
+    <a href="/posts">← All Posts</a>
+  </div>
+</Layout>
+
+<style>
+  article {
+    max-width: 100%;
+  }
+
+  .content {
+    margin-top: 2rem;
+    line-height: 1.8;
+  }
+
+  .content :global(h1) {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .content :global(h2) {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .content :global(h3) {
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .content :global(ul),
+  .content :global(ol) {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+  }
+
+  .content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .content :global(pre) {
+    background-color: var(--code-bg);
+    padding: 1rem;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+
+  .content :global(code) {
+    background-color: var(--code-bg);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  .content :global(pre code) {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .content :global(blockquote) {
+    border-left: 4px solid var(--border-color);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: var(--gray-text);
+  }
+
+  .content :global(img) {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+  }
+</style>

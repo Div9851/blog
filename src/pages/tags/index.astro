@@ -1,0 +1,34 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { SITE_TITLE } from "../../config";
+
+const allPosts = await getCollection("posts");
+
+const tagCounts = new Map<string, number>();
+allPosts.forEach((post) => {
+  post.data.tags.forEach((tag) => {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  });
+});
+
+const sortedTags = Array.from(tagCounts.entries()).sort((a, b) =>
+  a[0].localeCompare(b[0], "ja")
+);
+---
+
+<Layout title={`Tags - ${SITE_TITLE}`}>
+  <h1>Tags</h1>
+  <div class="tag-cloud">
+    {
+      sortedTags.map(([tag, count]) => (
+        <div class="tag-cloud-item">
+          <a href={`/tags/${tag}`} class="tag-cloud-link">
+            {tag}
+          </a>
+          <span class="tag-count">({count})</span>
+        </div>
+      ))
+    }
+  </div>
+</Layout>

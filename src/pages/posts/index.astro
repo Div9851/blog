@@ -1,0 +1,41 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { SITE_TITLE } from "../../config";
+
+const allPosts = await getCollection("posts");
+const sortedPosts: CollectionEntry<"posts">[] = allPosts.sort(
+  (a: CollectionEntry<"posts">, b: CollectionEntry<"posts">) =>
+    b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<Layout title={`All Posts - ${SITE_TITLE}`}>
+  <h1>All Posts</h1>
+  <ul class="post-list">
+    {
+      sortedPosts.map((post) => (
+        <li class="post-item">
+          <div class="post-meta">
+            {post.data.date.toLocaleDateString("ja-JP", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </div>
+          <h2 class="post-title">
+            <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+          </h2>
+          <div class="tags">
+            {post.data.tags.map((tag) => (
+              <a href={`/tags/${tag}`} class="tag">
+                {tag}
+              </a>
+            ))}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>

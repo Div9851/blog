@@ -1,0 +1,54 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SITE_TITLE } from "../config";
+---
+
+<Layout title={`About - ${SITE_TITLE}`}>
+  <h1>About</h1>
+  <div class="about-content">
+    <p>
+      こんにちは！このブログでは、技術的な学びや日々の気づきを記録しています。
+    </p>
+
+    <h2>このブログについて</h2>
+    <p>
+      Astro + Cloudflare
+      Pagesで構築されたシンプルな個人ブログです。Markdown形式で記事を書いて、静的サイトとして公開しています。
+    </p>
+
+    <h2>興味のあること</h2>
+    <ul>
+      <li>Web開発</li>
+      <li>フロントエンド技術</li>
+      <li>パフォーマンス最適化</li>
+      <li>開発者体験の向上</li>
+    </ul>
+
+    <h2>お問い合わせ</h2>
+    <p>ご質問やご意見がありましたら、お気軽にお問い合わせください。</p>
+  </div>
+</Layout>
+
+<style>
+  .about-content {
+    line-height: 1.8;
+  }
+
+  .about-content p {
+    margin-bottom: 1.5rem;
+  }
+
+  .about-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .about-content ul {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+  }
+
+  .about-content li {
+    margin-bottom: 0.5rem;
+  }
+</style>
