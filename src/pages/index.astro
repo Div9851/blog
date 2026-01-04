@@ -12,7 +12,7 @@ const sortedPosts = allPosts.sort(
 const recentPosts: CollectionEntry<"posts">[] = sortedPosts.slice(0, 5);
 ---
 
-<Layout title={`Home - ${SITE_TITLE}`}>
+<Layout title={SITE_TITLE}>
   <h1>Recent Posts</h1>
   <ul class="post-list">
     {
