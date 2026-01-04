@@ -4,51 +4,130 @@ import { SITE_TITLE } from "../config";
 ---
 
 <Layout title={`About - ${SITE_TITLE}`}>
-  <h1>About</h1>
-  <div class="about-content">
-    <p>
-      こんにちは！このブログでは、技術的な学びや日々の気づきを記録しています。
-    </p>
+  <div class="about-container">
+    <div class="profile-section">
+      <div class="profile-image">
+        <img src="/profile.jpg" alt="Profile" />
+      </div>
+      <div class="profile-info">
+        <h1 class="profile-name">Satoshi Warita</h1>
+        <p class="profile-title">Software Engineer</p>
+        <p class="profile-description">
+          I'm a software engineer working in Tokyo. Father of one child and one
+          dog. Interested in designing software, solving algorithmic problems,
+          and building things from scratch.
+        </p>
+      </div>
+    </div>
 
-    <h2>このブログについて</h2>
-    <p>
-      Astro + Cloudflare
-      Pagesで構築されたシンプルな個人ブログです。Markdown形式で記事を書いて、静的サイトとして公開しています。
-    </p>
-
-    <h2>興味のあること</h2>
-    <ul>
-      <li>Web開発</li>
-      <li>フロントエンド技術</li>
-      <li>パフォーマンス最適化</li>
-      <li>開発者体験の向上</li>
-    </ul>
-
-    <h2>お問い合わせ</h2>
-    <p>ご質問やご意見がありましたら、お気軽にお問い合わせください。</p>
+    <div class="accounts-section">
+      <h2>Links</h2>
+      <ul>
+        <li><a href="https://x.com/home">X</a></li>
+        <li>
+          <a href="https://www.linkedin.com/in/satoshi-warita-00179b20a/"
+            >LinkedIn</a>
+        </li>
+        <li><a href="https://github.com/Div9851">GitHub</a></li>
+        <li><a href="https://atcoder.jp/users/Div9851">AtCoder</a></li>
+      </ul>
+    </div>
   </div>
 </Layout>
 
 <style>
-  .about-content {
+  .about-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .profile-section {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    align-items: flex-start;
+  }
+
+  .profile-image {
+    flex-shrink: 0;
+  }
+
+  .profile-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+
+  .profile-name {
+    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+  }
+
+  .profile-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: var(--gray-text);
+    font-weight: 500;
+  }
+
+  .profile-description {
+    margin: 0;
     line-height: 1.8;
+    color: var(--text-color);
   }
 
-  .about-content p {
-    margin-bottom: 1.5rem;
-  }
-
-  .about-content h2 {
+  .accounts-section h2 {
     margin-top: 2rem;
     margin-bottom: 1rem;
+    font-size: 1.5rem;
   }
 
-  .about-content ul {
-    margin-bottom: 1.5rem;
-    padding-left: 2rem;
+  .accounts-section ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
   }
 
-  .about-content li {
-    margin-bottom: 0.5rem;
+  .accounts-section li {
+    margin: 0;
+  }
+
+  .accounts-section a {
+    text-decoration: none;
+    color: var(--link-color);
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .accounts-section a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .profile-section {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .profile-image img {
+      width: 120px;
+      height: 120px;
+    }
+
+    .accounts-section ul {
+      justify-content: center;
+    }
   }
 </style>
