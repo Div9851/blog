@@ -8,11 +8,11 @@ Haskell で AtCoder をするための環境を作り直したので、わすれ
 
 必要なツール
 
-- GHCup: GHC, cabal を管理するツール
+- GHCup: GHC, Cabal を管理するツール
 - GHC: コンパイラ
 - Cabal: パッケージマネージャ
 
-まず GHCup をインストールし、GHCup で GHC と cabal をインストールする。2026年1月現在、AtCoder 環境では GHC 9.8.4, Cabal 3.14 を利用しているようなので、合わせておくのが無難そう。
+まず GHCup をインストールし、GHCup で GHC と Cabal をインストールする。2026年1月現在、AtCoder 環境では GHC 9.8.4, Cabal 3.14 を利用しているようなので、合わせておくのが無難そう。
 
 これらのツールがインストールできたら、 [Div9851/atcoder-haskell](https://github.com/Div9851/atcoder-haskell/tree/71d12ffa77cb2603d4189bf340b1c262cd914e4a) を clone してきて、README に書いてあるコマンドを実行してパッケージをインストールすれば ok。
 
