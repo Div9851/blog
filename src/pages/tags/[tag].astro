@@ -35,7 +35,10 @@ const { tag } = Astro.params;
 const { posts } = Astro.props;
 ---
 
-<Layout title={`Tag: ${tag} - ${SITE_TITLE}`}>
+<Layout
+  title={`Tag: ${tag} - ${SITE_TITLE}`}
+  description={`Posts tagged with "${tag}"`}
+>
   <h1>Tag: {tag}</h1>
   <p style="color: var(--gray-text); margin-bottom: 2rem;">
     {posts.length} post{posts.length !== 1 ? "s" : ""}
