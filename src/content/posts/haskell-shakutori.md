@@ -52,6 +52,19 @@ shakutori' cond op invOp initial as = snd $ mapAccumL f ((initial, 0), as) as
 
 この関数を用いていくつか問題を解いてみます。
 
+## [ABC022 B - 細長いお菓子](https://atcoder.jp/contests/arc022/tasks/arc022_2)
+
+```haskell
+main :: IO ()
+main = do
+  n <- getInt
+  as <- getInts
+
+  let ans = maximum $ map snd $ shakutori' (flip IntSet.notMember) (flip IntSet.insert) (flip IntSet.delete) IntSet.empty as
+
+  print ans
+```
+
 ## [ABC032 C - 列](https://atcoder.jp/contests/abc032/tasks/abc032_c)
 
 ```haskell
