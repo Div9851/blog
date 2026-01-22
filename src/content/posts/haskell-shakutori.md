@@ -20,21 +20,34 @@ tags: ["競技プログラミング"]
 
 さて、しゃくとり法を Haskell でスマートに書くにはどうしたらよいでしょうか？
 
-抽象的に捉えると、しゃくとり法は「区間に対して定まるなんらかの値 $f$（合計、合計と長さのペアなど）」と「現在の右端を指すポインタ」を状態として持ちながらリストを走査し、$f$ のリストを出力するアルゴリズムと言えます。
+抽象的に捉えると、しゃくとり法は「区間に対して定まるなんらかの値 $f$（合計、長さなど）」と「現在の右端を指すポインタ」を状態として持ちながらリストを走査し、$f$ のリストを出力するアルゴリズムと言えます。
 
 Haskell には `mapAccumL` という、まさに「状態を持ちながらリストを走査し、リストを出力する」ための関数があるのでこれを利用するとすっきり書けそうです。
 
-これを踏まえて書いてみたのが以下の関数です。
+これを踏まえて書いてみたのが以下の関数です。条件を満たす最小の右端を求めたい場合と最大の右端を求めたい場合があるので、2種類用意しています。
 
 ```haskell
--- cond を満たすか末尾に達するまで区間を伸ばす。(区間に対して定まる値, cond を満たすかどうか)のリストを返す。
-shakutori :: (a -> Bool) -> (a -> b -> a) -> (a -> b -> a) -> a -> [b] -> [(a, Bool)]
-shakutori cond op invOp initial as = snd $ mapAccumL f (initial, as) as
+-- cond を満たすまで区間を伸ばす。(累積値, 長さ)のリストを返す。
+shakutori :: (a -> Bool) -> (a -> b -> a) -> (a -> b -> a) -> a -> [b] -> [(a, Int)]
+shakutori cond op invOp initial as = snd $ mapAccumL f ((initial, 0), as) as
   where
-    f (acc, r : rs) x
-      | cond acc = ((acc `invOp` x, r : rs), (acc, True))
-      | otherwise = f (acc `op` r, rs) x
-    f (acc, []) x = ((acc `invOp` x, []), (acc, cond acc))
+    f ((acc, len), r : rs) x
+      | cond acc = (((acc `invOp` x, len - 1), r : rs), (acc, len))
+      | otherwise = f ((acc `op` r, len + 1), rs) x
+    f ((acc, len), []) x = (((acc `invOp` x, len - 1), []), (acc, len + if cond acc then 0 else 1))
+
+-- cond を満たす間、区間を伸ばす。(累積値, 長さ)のリストを返す。
+shakutori' :: (a -> b -> Bool) -> (a -> b -> a) -> (a -> b -> a) -> a -> [b] -> [(a, Int)]
+shakutori' cond op invOp initial as = snd $ mapAccumL f ((initial, 0), as) as
+  where
+    f ((_, 0), r : rs) x
+      | cond initial r = f ((initial `op` r, 1), rs) x
+      | otherwise = (((initial, 0), rs), (initial, 0))
+    f ((acc, len), r : rs) x
+      | cond acc r = f ((acc `op` r, len + 1), rs) x
+      | otherwise = (((acc `invOp` x, len - 1), r : rs), (acc, len))
+    f ((acc, len), []) x = (((acc `invOp` x, len - 1), []), (acc, len))
+
 ```
 
 この関数を用いていくつか問題を解いてみます。
@@ -55,11 +68,21 @@ main = do
     print 0
     exitSuccess
 
-  let res = shakutori ((> k) . fst) op invOp (1 :: Int, 0 :: Int) as
-        where
-          op (acc, len) x = (acc * x, len + 1)
-          invOp (acc, len) x = (acc `div` x, len - 1)
-      ans = maximumDef 0 $ map (\((_, len), ok) -> if ok then len - 1 else len) res
+  let res = shakutori' (\acc x -> acc * x <= k) (*) div (1 :: Int) as
+      ans = maximumDef 0 $ map snd res
+  print ans
+```
+
+## [ABC038 C - 単調増加](https://atcoder.jp/contests/abc038/tasks/abc038_c)
+
+```haskell
+main :: IO ()
+main = do
+  n <- getInt
+  as <- getInts
+
+  let ans = sum $ map snd $ shakutori' (<) (\_ x -> x) const 0 as
+
   print ans
 ```
 
@@ -71,11 +94,11 @@ main = do
   n <- getInt
   as <- getInts
 
-  let res = shakutori (\(acc, acc', _) -> acc /= acc') op invOp (0 :: Int, 0 :: Int, 0 :: Int) as
+  let res = shakutori' (\(acc, acc') x -> acc + x == acc' .^. x) op invOp (0 :: Int, 0 :: Int) as
         where
-          op (acc, acc', len) x = (acc + x, acc' .^. x, len + 1)
-          invOp (acc, acc', len) x = (acc - x, acc' .^. x, len - 1)
-      ans = sum $ map (\((_, _, len), ok) -> if ok then len - 1 else len) res
+          op (acc, acc') x = (acc + x, acc' .^. x)
+          invOp (acc, acc') x = (acc - x, acc' .^. x)
+      ans = sum $ map snd res
   print ans
 ```
 
@@ -100,20 +123,15 @@ main = do
 ## [ABC430 C - Truck Driver](http://atcoder.jp/contests/abc430/tasks/abc430_c)
 
 ```haskell
+main :: IO ()
 main = do
   (n, a, b) <- getInt3
   s <- BS.unpack <$> BS.getLine
 
   let as = map (\ch -> if ch == 'a' then 1 else 0) s
       bs = map (\ch -> if ch == 'b' then 1 else 0) s
-      op (cnt, len) x = (cnt + x, len + 1)
-      invOp (cnt, len) x = (cnt - x, len - 1)
-      ansA = shakutori ((>= a) . fst) op invOp (0 :: Int, 0 :: Int) as
-      ansB = shakutori ((>= b) . fst) op invOp (0 :: Int, 0 :: Int) bs
-      ans = sum $ zipWith f ansA ansB
-        where
-          f (_, False) _ = 0
-          f ((_, len), True) ((_, len'), False) = (len' + 1) - len
-          f ((_, len), True) ((_, len'), True) = max (len' - len) 0
+      ls = map snd $ shakutori (>= a) (+) (-) (0 :: Int) as
+      rs = map snd $ shakutori (>= b) (+) (-) (0 :: Int) bs
+      ans = sum $ zipWith (\l r -> max (r - l) 0) ls rs
   print ans
 ```
