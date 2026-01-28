@@ -1,5 +1,5 @@
 ---
-title: "AtCoder部 2026-01-218"
+title: "AtCoder部 2026-01-28"
 date: 2026-01-28
 tags: ["AtCoder部"]
 ---
